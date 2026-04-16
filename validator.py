@@ -1,6 +1,6 @@
-import csv
 import os
 import re
+import csv
 
 REQUIRED_HEADERS = [
     "batch_id","timestamp",
@@ -43,23 +43,23 @@ def validate_csv_content(path):
                 except:
                     return False, "Non-numeric value"
 
-    return True, None
+    return True, "Valid"
+
 
 
 def validate_csv(path, tracker):
-    # filename check
     filename = os.path.basename(path)
+
     if not valid_filename(filename):
         return False, "Invalid filename format"
 
-    # duplicate file check (tracker)
-    if tracker.is_duplicate(filename):
-        return False, "Duplicate batch_id"
+    if tracker.is_processed(filename):
+        return False, "Duplicate file"
 
-    # content validation
     is_valid, error = validate_csv_content(path)
     if not is_valid:
         return False, error
 
     tracker.mark_processed(filename)
+
     return True, None
