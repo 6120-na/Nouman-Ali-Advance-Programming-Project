@@ -1,15 +1,19 @@
-import uuid
+import requests
 from datetime import datetime
 
 class Logger:
-    def __init__(self, logfile="error.log"):
-        self.logfile = logfile
+    def __init__(self):
+        self.log_file = "error.log"
+
+    def get_uuid(self):
+        try:
+            response = requests.get("https://www.uuidtools.com/api/generate/v1")
+            return response.json()[0]
+        except:
+            return "LOCAL-UUID"
 
     def log(self, filename, error):
-        entry = (
-            f"{datetime.now()} | "
-            f"{uuid.uuid4()} | "
-            f"{filename} -> {error}\n"
-        )
-        with open(self.logfile, "a") as f:
-            f.write(entry)
+        uid = self.get_uuid()
+        timestamp = datetime.now()
+        with open(self.log_file, "a") as f:
+            f.write(f"{timestamp} | {uid} | {filename} -> {error}\n")
